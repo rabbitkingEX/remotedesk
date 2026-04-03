@@ -4,15 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 5174",
-    "build": "vite build"
+    "dev": "concurrently \"vite --port 5174\" \"node server/index.js\"",
+    "build": "vite build",
+    "start": "node server/index.js"
   },
   "dependencies": {
     "@nut-tree-fork/nut-js": "^4.2.6",
+    "concurrently": "^9.2.1",
+    "express": "^5.2.1",
     "peerjs": "^1.5.5",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.2",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "ws": "^8.20.0"
   },
   "devDependencies": {

@@ -4,8 +4,11 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/remotedesk/',
   server: {
     port: 5174,
+    proxy: {
+      '/socket.io': { target: 'http://localhost:3200', ws: true },
+      '/api': { target: 'http://localhost:3200' },
+    },
   },
 })

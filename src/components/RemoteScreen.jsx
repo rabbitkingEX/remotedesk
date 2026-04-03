@@ -29,7 +29,7 @@ export default function RemoteScreen({ stream, getDataConn }) {
     const tryAttach = () => {
       if (stopped || detach) return;
       const dc = getDataConn();
-      if (dc?.open) {
+      if (dc?.readyState === 'open') {
         detach = attachViewerControls(video, dc);
       }
     };

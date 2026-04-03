@@ -1,12 +1,12 @@
-export function setupClipboardSync(dataConn) {
+export function setupClipboardSync(channel) {
   let lastText = '';
 
   const sendClipboard = async () => {
     try {
       const text = await navigator.clipboard.readText();
-      if (text && text !== lastText && dataConn.open) {
+      if (text && text !== lastText && channel.open) {
         lastText = text;
-        dataConn.send({ ch: 'clip', text });
+        channel.send({ type: 'clipboard', text });
       }
     } catch {}
   };
@@ -16,11 +16,9 @@ export function setupClipboardSync(dataConn) {
   return {
     cleanup: () => clearInterval(interval),
     handleMessage: async (msg) => {
-      if (msg.ch === 'clip' && msg.text) {
+      if (msg.type === 'clipboard' && msg.text) {
         lastText = msg.text;
-        try {
-          await navigator.clipboard.writeText(msg.text);
-        } catch {}
+        try { await navigator.clipboard.writeText(msg.text); } catch {}
       }
     },
   };

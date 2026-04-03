@@ -1,8 +1,8 @@
 const CHUNK_SIZE = 64 * 1024;
 
-export function sendFile(dataConn, file, onProgress) {
+export function sendFile(channel, file, onProgress) {
   return new Promise((resolve, reject) => {
-    dataConn.send({ ch: 'file', type: 'file-meta', name: file.name, size: file.size, mimeType: file.type });
+    channel.send({ type: 'file-meta', name: file.name, size: file.size, mimeType: file.type });
 
     const reader = new FileReader();
     let offset = 0;
@@ -12,16 +12,12 @@ export function sendFile(dataConn, file, onProgress) {
     };
 
     reader.onload = (e) => {
-      dataConn.send({ ch: 'file', type: 'file-chunk', data: Array.from(new Uint8Array(e.target.result)) });
+      channel.send({ type: 'file-chunk', data: Array.from(new Uint8Array(e.target.result)) });
       offset += e.target.result.byteLength;
       if (onProgress) onProgress(offset / file.size);
 
-      if (offset < file.size) {
-        readSlice();
-      } else {
-        dataConn.send({ ch: 'file', type: 'file-end' });
-        resolve();
-      }
+      if (offset < file.size) readSlice();
+      else { channel.send({ type: 'file-end' }); resolve(); }
     };
 
     reader.onerror = reject;
@@ -35,8 +31,6 @@ export function createFileReceiver(onFileReceived, onProgress) {
   let received = 0;
 
   return (msg) => {
-    if (msg.ch !== 'file') return;
-
     if (msg.type === 'file-meta') {
       currentFile = msg;
       chunks = [];
