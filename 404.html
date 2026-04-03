@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    // GitHub Pages SPA redirect: converts path to query string so index.html can handle it
+    var path = window.location.pathname.replace('/remotedesk', '');
+    var search = window.location.search;
+    window.location.replace('/remotedesk/' + '?p=' + encodeURIComponent(path + search));
+  </script>
+</head>
+</html>
